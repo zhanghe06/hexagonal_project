@@ -1,0 +1,16 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+mysql:
+  username: "root"
+  password: "123456"
+  db_host: "127.0.0.1"
+  db_port: "3306"
+  db_name: "hexagonal_project"
+  charset: "utf8"
+  timeout: "10s"
+  timeout_read: "30s"
+  timeout_write: "30s"
+  max_open_conns: 50
+  max_idle_conns: 10
+  conn_max_lifetime: 500
