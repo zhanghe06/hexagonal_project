@@ -20,13 +20,13 @@ go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
 
 Refer: [https://dev.mysql.com/doc/refman/8.0/en/integer-types.html](https://dev.mysql.com/doc/refman/8.0/en/integer-types.html)
 
-gorm | mysql | byte size | number range
---- | --- | --- | ---
-uint8 | tinyint(4) unsigned | 1 | 0-255
-uint16 | smallint(6) unsigned | 2 | 0-65535
-- | mediumint(9) unsigned | 3 | 0-16777215
-uint32 | int(11) unsigned | 4 | 0-4294967295
-uint64 | bigint(21) unsigned | 8 | 0-18446744073709551615
+| gorm | mysql | byte size | number range
+| --- | --- | --- | ---
+| uint8 | tinyint(4) unsigned | 1 | 0-255
+| uint16 | smallint(6) unsigned | 2 | 0-65535
+| - | mediumint(9) unsigned | 3 | 0-16777215
+| uint32 | int(11) unsigned | 4 | 0-4294967295
+| uint64 | bigint(21) unsigned | 8 | 0-18446744073709551615
 
 Note: the mysql type int(M) M indicates the maximum display width, regardless of how much storage space is occupied
 
