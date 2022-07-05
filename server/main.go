@@ -6,6 +6,7 @@ import (
 	"hexagonal_project/adapter/driver"
 	"hexagonal_project/adapter/driver/http"
 	"hexagonal_project/infrastructure/config"
+	"hexagonal_project/infrastructure/middleware"
 	"log"
 	"os"
 )
@@ -40,6 +41,7 @@ func (s *server) Start() {
 		engine.Use(
 			//gin.Logger(),
 			gin.LoggerWithConfig(logConf),
+			middleware.RecoveryMiddleware(),
 		)
 		engine.UseRawPath = true
 

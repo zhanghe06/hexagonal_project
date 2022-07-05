@@ -2,7 +2,7 @@ package vo
 
 // CustomerCreateReq .
 type CustomerCreateReq struct {
-	Name string `binding:"required" form:"name" json:"name"` // 名称
+	Name string `binding:"required,email" form:"name" json:"name"` // 名称
 }
 
 // CustomerUpdateReq .

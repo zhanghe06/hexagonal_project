@@ -8,6 +8,7 @@ import (
 	"hexagonal_project/domain/entity"
 	"hexagonal_project/domain/service"
 	"hexagonal_project/domain/vo"
+	"hexagonal_project/infrastructure/response"
 	"hexagonal_project/port/service_port"
 	"net/http"
 	"strings"
@@ -41,6 +42,8 @@ func (h *customerHttpHandler) RegisterAPI(engine *gin.Engine) {
 }
 
 func (h *customerHttpHandler) getInfoHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
 
 	// 请求处理
 	var uriIdReq vo.UriIdReq
@@ -61,6 +64,8 @@ func (h *customerHttpHandler) getInfoHandler(c *gin.Context) {
 }
 
 func (h *customerHttpHandler) createHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
 
 	// 请求处理
 	var customerCreateReq vo.CustomerCreateReq
@@ -91,6 +96,9 @@ func (h *customerHttpHandler) createHandler(c *gin.Context) {
 }
 
 func (h *customerHttpHandler) updateHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
+
 	// 请求处理
 	var uriIdReq vo.UriIdReq
 	if err := c.ShouldBindUri(&uriIdReq); err != nil {
@@ -127,6 +135,9 @@ func (h *customerHttpHandler) updateHandler(c *gin.Context) {
 }
 
 func (h *customerHttpHandler) getListHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
+
 	// 请求处理
 	var customerGetListReq vo.CustomerGetListReq
 	if err := c.ShouldBindQuery(&customerGetListReq); err != nil {
@@ -177,6 +188,9 @@ func (h *customerHttpHandler) getListHandler(c *gin.Context) {
 }
 
 func (h *customerHttpHandler) deleteHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
+
 	// 请求处理
 	var uriIdReq vo.UriIdReq
 	if err := c.ShouldBindUri(&uriIdReq); err != nil {
