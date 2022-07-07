@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 	"hexagonal_project/adapter/driver"
 	"hexagonal_project/domain/entity"
 	"hexagonal_project/domain/service"
@@ -55,7 +57,20 @@ func (h *customerHttpHandler) getInfoHandler(c *gin.Context) {
 	// 逻辑处理
 	res, err := h.customerService.GetInfo(c, uriIdReq.ID)
 	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 原始错误
+			//_ = c.AbortWithError(http.StatusNotFound, err)
+
+			// 封装错误
+			apiErr := response.NewApiError(
+				err.Error(),
+				response.CustomerNotFound,
+			)
+			_ = c.AbortWithError(http.StatusNotFound, apiErr)
+			return
+		}
+		// 异常错误
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 

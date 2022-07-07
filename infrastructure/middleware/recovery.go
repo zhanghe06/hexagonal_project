@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"hexagonal_project/infrastructure/errors"
+	"hexagonal_project/infrastructure/response"
 	"net/http"
 )
 
@@ -15,7 +15,7 @@ func RecoveryMiddleware() gin.HandlerFunc {
 
 				switch interface{}(err.Err).(type) {
 				// 接口错误
-				case *errors.ApiError:
+				case *response.ApiError:
 					c.AbortWithStatusJSON(statusCode, err.Err)
 				// 组件错误 todo
 				// 系统异常
@@ -23,7 +23,7 @@ func RecoveryMiddleware() gin.HandlerFunc {
 					if statusCode >= http.StatusInternalServerError {
 						// 服务器的内部错误
 						c.AbortWithStatusJSON(statusCode, gin.H{
-							"code":    errors.InternalServerError,
+							"code":    response.InternalServerError,
 							"message": http.StatusText(http.StatusInternalServerError),
 							"cause":   err.Error(),
 						})

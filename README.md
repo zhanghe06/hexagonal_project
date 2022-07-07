@@ -55,3 +55,13 @@ year | 1 | year
 
 - service use`entity.Xxxx`，The parameters of the business logic may mix data from different tables, using entities
 - repository use`model.Xxxx`，Data operations operate directly on a single table, using Model
+
+## DTO、VO
+
+- DTO - controller request
+- VO - controller response
+
+## TODO
+
+- [X] Dependency inversion principle，DIP
+- [ ] Inversion of Control，IoC

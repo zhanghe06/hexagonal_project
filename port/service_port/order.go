@@ -5,7 +5,7 @@ import (
 	"hexagonal_project/domain/entity"
 )
 
-// OrderServicePort 内部实现
+// OrderServicePort 驱动端口 内部实现
 type OrderServicePort interface {
 	GetInfo(ctx context.Context, id uint64) (res *entity.Order, err error)
 	//Create(ctx context.Context, data entity.Order) (res *entity.Order, err error)

@@ -55,3 +55,40 @@ year | 1 | 年份
 
 - service 使用`entity.Xxxx`，业务逻辑的参数可能混合不同表的数据，使用实体
 - repository 使用`model.Xxxx`，数据操作直接对单表进行操作，使用model
+
+## DTO、VO
+
+- DTO - controller request
+- VO - controller response
+
+## 错误处理
+
+- controller
+  - 调用service
+  - 错误类型：
+    - panic，框架最外层捕获，无需处理
+    - 参数校验错误，无需调用service，附上http status code（400），封装具体业务错误码，返回接口响应
+    - 调用service报错，根据错误类型，判断http status code（4xx；500）之后，封装具体业务错误码，返回接口响应
+
+- service
+  - 调用repository
+  - 错误类型：
+    - panic，框架最外层捕获，无需处理
+    - repository抛上来的错误
+    - 业务本身产生的错误，直接抛给controller
+
+- repository
+  - 数据库操作，一般不含业务逻辑
+  - 错误类型：
+    - panic，框架最外层捕获，无需处理
+    - 数据库操作错误，直接抛给调用方，无需处理
+
+- http status code 和 封装具体业务错误码 仅仅在controller这一层处理（因为controller可能会调用不同业务模块的service，service无法确定调用方的具体业务模块）
+- repository这一层的错误直接抛给调用方service
+
+https://github.com/go-gorm/gorm/blob/master/errors.go
+
+## TODO
+
+- [X] 依赖反转（Dependency inversion principle，DIP）
+- [ ] 控制反转（Inversion of Control，IoC）
