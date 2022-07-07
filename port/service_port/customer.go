@@ -5,6 +5,7 @@ import (
 	"hexagonal_project/domain/entity"
 )
 
+//go:generate mockgen -source=./customer.go -destination ./mock/mock_customer.go -package mock
 // CustomerServicePort 驱动端口 内部实现
 type CustomerServicePort interface {
 	GetInfo(ctx context.Context, id uint64) (res *entity.Customer, err error)

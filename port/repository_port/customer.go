@@ -5,6 +5,7 @@ import (
 	"hexagonal_project/infrastructure/model"
 )
 
+//go:generate mockgen -source=./customer.go -destination ./mock/mock_customer.go -package mock
 // CustomerRepositoryPort 从动端口 外部实现
 type CustomerRepositoryPort interface {
 	GetInfo(ctx context.Context, id uint64) (res *model.Customer, err error)

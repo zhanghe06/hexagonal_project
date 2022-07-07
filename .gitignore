@@ -1,1 +1,7 @@
 .idea/
+
+vendor/
+
+# 测试报告
+report/*
+!report/.gitkeep

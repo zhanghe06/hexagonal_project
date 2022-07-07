@@ -4,6 +4,11 @@
 
 ## 项目依赖
 
+解决`go mod`或`go get`超时
+```
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+
 ```
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/mysql
@@ -14,6 +19,14 @@ go get -u github.com/google/uuid
 go get -u github.com/golang/mock/gomock
 go install github.com/golang/mock/mockgen@v1.6.0
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
+```
+
+## 项目演示
+
+```
+golangci-lint run ./...
+go generate ./...
+go test -count=1 -cover ./...
 ```
 
 ## Gorm MySQL 字段对比

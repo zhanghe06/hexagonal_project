@@ -16,6 +16,15 @@ go install github.com/golang/mock/mockgen@v1.6.0
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
 ```
 
+## Demo
+
+```
+golangci-lint run ./...
+go generate ./...
+go test -count=1 -cover ./...
+```
+
+
 ## Gorm vs MySQL
 
 Refer: [https://dev.mysql.com/doc/refman/8.0/en/integer-types.html](https://dev.mysql.com/doc/refman/8.0/en/integer-types.html)
