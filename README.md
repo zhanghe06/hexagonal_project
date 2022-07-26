@@ -37,7 +37,9 @@ Refer: [https://dev.mysql.com/doc/refman/8.0/en/integer-types.html](https://dev.
 | uint32 | int(11) unsigned | 4 | 0-4294967295
 | uint64 | bigint(21) unsigned | 8 | 0-18446744073709551615
 
-Note: the mysql type int(M) M indicates the maximum display width, regardless of how much storage space is occupied
+Note:
+1. the mysql type int(M) M indicates the maximum display width, regardless of how much storage space is occupied
+2. int In a 32-bit system, the same as the uint32. In a 64-bit system, the value is the same as uint64
 
 mysql string type:
 
@@ -59,6 +61,10 @@ time | 3 | time
 datetime | 8 | time
 timestamp | 4 | time
 year | 1 | year
+
+## GORM with Context
+
+[GORM with Context](https://gorm.io/docs/context.html)
 
 ## usage scenarios of the parameters' model.xxxx 'and' entity.xxxx '
 

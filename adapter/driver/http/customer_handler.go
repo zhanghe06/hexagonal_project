@@ -19,6 +19,7 @@ import (
 
 type customerHttpHandler struct {
 	customerService service_port.CustomerServicePort
+	customerAddressService service_port.CustomerAddressServicePort
 }
 
 var (
@@ -30,32 +31,38 @@ func NewCustomerHttpHandler() driver.HttpHandlerInterface {
 	customerHttpOnce.Do(func() {
 		customerHttpHand = &customerHttpHandler{
 			customerService: service.NewCustomerService(),
+			customerAddressService: service.NewCustomerAddressService(),
 		}
 	})
 	return customerHttpHand
 }
 
 func (h *customerHttpHandler) RegisterAPI(engine *gin.Engine) {
-	engine.GET("/customer/:id", h.getInfoHandler)
-	engine.POST("/customer", h.createHandler)
-	engine.POST("/customer/:id", h.updateHandler)
-	engine.GET("/customer", h.getListHandler)
-	engine.DELETE("/customer/:id", h.deleteHandler)
+	engine.GET("/customer/:customer_id", h.getCustomerHandler)
+	engine.POST("/customer", h.createCustomerHandler)
+	engine.PUT("/customer/:customer_id", h.updateCustomerHandler)
+	engine.GET("/customer", h.getCustomerListHandler)
+	engine.DELETE("/customer/:customer_id", h.deleteCustomerHandler)
+	engine.GET("/customer/:customer_id/address/:address_id", h.getCustomerAddressHandler)
+	//engine.POST("/customer/:customer_id/address", h.createCustomerAddressHandler)
+	//engine.PUT("/customer/:customer_id/address/:address_id", h.updateCustomerAddressHandler)
+	//engine.GET("/customer/:customer_id/address", h.getCustomerAddressListHandler)
+	//engine.DELETE("/customer/:customer_id/address/:address_id", h.deleteCustomerAddressHandler)
 }
 
-func (h *customerHttpHandler) getInfoHandler(c *gin.Context) {
+func (h *customerHttpHandler) getCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
 
 	// 请求处理
-	var uriIdReq vo.UriIdReq
+	var uriIdReq vo.UriCustomerIdReq
 	if err := c.ShouldBindUri(&uriIdReq); err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// 逻辑处理
-	res, err := h.customerService.GetInfo(c, uriIdReq.ID)
+	res, err := h.customerService.GetInfo(c, uriIdReq.CustomerId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 原始错误
@@ -78,9 +85,12 @@ func (h *customerHttpHandler) getInfoHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (h *customerHttpHandler) createHandler(c *gin.Context) {
+func (h *customerHttpHandler) createCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
+
+	// TODO 测试Context 后续放在认证中间件处理
+	c.Set("userId", 100)
 
 	// 请求处理
 	var customerCreateReq vo.CustomerCreateReq
@@ -89,12 +99,23 @@ func (h *customerHttpHandler) createHandler(c *gin.Context) {
 		return
 	}
 
-	// TODO 测试Context 后续放在认证中间件处理
-	c.Set("userId", "admin")
-
 	// 参数转换
 	var customerEntity entity.Customer
 	customerEntity.Name = customerCreateReq.Name
+
+
+	customerEntity.CustomerAddresses = make([]entity.CustomerAddress, 0)
+
+	for _, v := range customerCreateReq.CustomerAddresses {
+		customerAddress := entity.CustomerAddress{
+			Address: v.Address,
+			Contact: v.Contact,
+			Phone: v.Phone,
+			Email: v.Email,
+			DefaultSt: v.DefaultSt,
+		}
+		customerEntity.CustomerAddresses = append(customerEntity.CustomerAddresses, customerAddress)
+	}
 
 	// 逻辑处理
 	res, err := h.customerService.Create(c, customerEntity)
@@ -110,12 +131,15 @@ func (h *customerHttpHandler) createHandler(c *gin.Context) {
 	})
 }
 
-func (h *customerHttpHandler) updateHandler(c *gin.Context) {
+func (h *customerHttpHandler) updateCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
 
+	// TODO 测试Context 后续放在认证中间件处理
+	c.Set("userId", 100)
+
 	// 请求处理
-	var uriIdReq vo.UriIdReq
+	var uriIdReq vo.UriCustomerIdReq
 	if err := c.ShouldBindUri(&uriIdReq); err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -141,15 +165,15 @@ func (h *customerHttpHandler) updateHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.customerService.Update(c, uriIdReq.ID, data)
+	err = h.customerService.Update(c, uriIdReq.CustomerId, data)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-	c.Status(http.StatusNoContent)
+	c.Status(http.StatusOK)
 }
 
-func (h *customerHttpHandler) getListHandler(c *gin.Context) {
+func (h *customerHttpHandler) getCustomerListHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
 
@@ -202,19 +226,23 @@ func (h *customerHttpHandler) getListHandler(c *gin.Context) {
 	})
 }
 
-func (h *customerHttpHandler) deleteHandler(c *gin.Context) {
+func (h *customerHttpHandler) deleteCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
 
+	// TODO 测试Context 后续放在认证中间件处理
+	c.Set("userId", 100)
+
 	// 请求处理
-	var uriIdReq vo.UriIdReq
+	var uriIdReq vo.UriCustomerIdReq
 	if err := c.ShouldBindUri(&uriIdReq); err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// 逻辑处理
-	err := h.customerService.Delete(c, uriIdReq.ID)
+	err := h.customerService.Delete(c, uriIdReq.CustomerId)
+	// TODO
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -222,4 +250,39 @@ func (h *customerHttpHandler) deleteHandler(c *gin.Context) {
 
 	// 响应处理
 	c.Status(http.StatusNoContent)
+}
+
+func (h *customerHttpHandler) getCustomerAddressHandler(c *gin.Context) {
+	// 异常捕获
+	defer response.ApiRecover(c)
+
+	// 请求处理
+	var uriIdReq vo.UriCustomerAddressIdReq
+	if err := c.ShouldBindUri(&uriIdReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	res, err := h.customerAddressService.GetInfo(c, uriIdReq.CustomerId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 原始错误
+			//_ = c.AbortWithError(http.StatusNotFound, err)
+
+			// 封装错误
+			apiErr := response.NewApiError(
+				err.Error(),
+				response.CustomerNotFound,
+			)
+			_ = c.AbortWithError(http.StatusNotFound, apiErr)
+			return
+		}
+		// 异常错误
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// 响应处理
+	c.JSON(http.StatusOK, res)
 }

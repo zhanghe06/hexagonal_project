@@ -72,10 +72,28 @@ func connect() (*gorm.DB, error) {
 
 	// 自动建表
 	err = db.AutoMigrate(
-		model.Address{},
 		model.Customer{},
-		model.Order{},
+		model.CustomerAddress{},
+		model.InBound{},
+		model.InBoundItem{},
+		model.Inventory{},
+		//model.Order{},
+		model.OutBound{},
+		model.OutBoundItem{},
 		model.Product{},
+		model.PurchaseOrder{},
+		model.PurchaseOrderItem{},
+		model.Rack{},
+		model.Role{},
+		model.SalesOrder{},
+		model.SalesOrderItem{},
+		model.StockCount{},
+		model.StockCountItem{},
+		model.Supplier{},
+		model.SupplierAddress{},
+		model.Tag{},
+		model.User{},
+		model.Warehouse{},
 	)
 	if err != nil {
 		return db, err

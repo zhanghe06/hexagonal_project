@@ -14,45 +14,36 @@ import (
 )
 
 var (
-	customerRepoOnce sync.Once
-	customerRepoImpl repository_port.CustomerRepositoryPort
+	customerAddressRepoOnce sync.Once
+	customerAddressRepoImpl repository_port.CustomerAddressRepositoryPort
 )
 
-type customerRepo struct {
+type customerAddressRepo struct {
 	db *gorm.DB
 }
 
-var _ repository_port.CustomerRepositoryPort = &customerRepo{}
+var _ repository_port.CustomerAddressRepositoryPort = &customerAddressRepo{}
 
-func NewCustomerRepo() repository_port.CustomerRepositoryPort {
-	customerRepoOnce.Do(func() {
-		customerRepoImpl = &customerRepo{
+func NewCustomerAddressRepo() repository_port.CustomerAddressRepositoryPort {
+	customerAddressRepoOnce.Do(func() {
+		customerAddressRepoImpl = &customerAddressRepo{
 			db: db.NewDB(),
 		}
 	})
-	return customerRepoImpl
+	return customerAddressRepoImpl
 }
 
-func (repo *customerRepo) GetInfo(ctx context.Context, id uint64) (res *model.Customer, err error) {
+func (repo *customerAddressRepo) GetInfo(ctx context.Context, id uint64) (res *model.CustomerAddress, err error) {
 	tx := repo.db.WithContext(ctx)
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
 
 	err = tx.Where(condition).First(&res).Error
-	if err != nil {
-		return
-	}
-
-	err = tx.Model(&res).Association("CustomerAddresses").Find(&res.CustomerAddresses)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
-func (repo *customerRepo) GetList(ctx context.Context, filter map[string]interface{}, args ...interface{}) (total int64, res []model.Customer, err error) {
+func (repo *customerAddressRepo) GetList(ctx context.Context, filter map[string]interface{}, args ...interface{}) (total int64, res []model.CustomerAddress, err error) {
 	tx := repo.db.WithContext(ctx)
 	// 排序条件
 	sorter := fmt.Sprintf("%s %s", "id", "DESC")
@@ -83,7 +74,7 @@ func (repo *customerRepo) GetList(ctx context.Context, filter map[string]interfa
 		}
 	}
 
-	dbQuery := tx.Model(&model.Customer{}).Where(condition)
+	dbQuery := tx.Model(&model.CustomerAddress{}).Where(condition)
 	if len(args) >= 2 {
 		dbQuery = dbQuery.Where(args[0], args[1:]...)
 	} else if len(args) >= 1 {
@@ -101,7 +92,7 @@ func (repo *customerRepo) GetList(ctx context.Context, filter map[string]interfa
 	return
 }
 
-func (repo *customerRepo) Create(ctx context.Context, data model.Customer) (res *model.Customer, err error) {
+func (repo *customerAddressRepo) Create(ctx context.Context, data model.CustomerAddress) (res *model.CustomerAddress, err error) {
 	tx := repo.db.WithContext(ctx)
 
 	// 逻辑处理
@@ -115,24 +106,24 @@ func (repo *customerRepo) Create(ctx context.Context, data model.Customer) (res 
 	return
 }
 
-func (repo *customerRepo) Update(ctx context.Context, id uint64, data map[string]interface{}) (err error) {
+func (repo *customerAddressRepo) Update(ctx context.Context, id uint64, data map[string]interface{}) (err error) {
 	tx := repo.db.WithContext(ctx)
 
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
 
-	var customer model.Customer
-	err = tx.Where(condition).First(&customer).Error
+	var customerAddress model.CustomerAddress
+	err = tx.Where(condition).First(&customerAddress).Error
 	if err != nil {
 		return
 	}
 
-	err = tx.Model(&customer).Updates(data).Error
+	err = tx.Model(&customerAddress).Updates(data).Error
 	return
 }
 
-func (repo *customerRepo) Delete(ctx context.Context, id uint64) (err error) {
+func (repo *customerAddressRepo) Delete(ctx context.Context, id uint64) (err error) {
 	tx := repo.db.WithContext(ctx)
 	// 参数处理
 	userId := ctx.Value("userId")
@@ -144,19 +135,19 @@ func (repo *customerRepo) Delete(ctx context.Context, id uint64) (err error) {
 	condition := make(map[string]interface{})
 	condition["id"] = id
 
-	var customer model.Customer
-	err = tx.Where(condition).First(&customer).Error
+	var customerAddress model.CustomerAddress
+	err = tx.Where(condition).First(&customerAddress).Error
 	if err != nil {
 		return
 	}
 
 	// 逻辑删除
-	customerUpdate := model.Customer{}
-	customerUpdate.DeletedAt = soft_delete.DeletedAt(time.Now().Unix())
-	customerUpdate.DeletedBy = operator
+	customerAddressUpdate := model.CustomerAddress{}
+	customerAddressUpdate.DeletedAt = soft_delete.DeletedAt(time.Now().Unix())
+	customerAddressUpdate.DeletedBy = operator
 
 	// Without Hooks/Time Tracking: https://gorm.io/docs/update.html#Without-Hooks-x2F-Time-Tracking
-	err = tx.Model(&customer).UpdateColumns(customerUpdate).Error
+	err = tx.Model(&customerAddress).UpdateColumns(customerAddressUpdate).Error
 
 	return
 }

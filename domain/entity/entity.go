@@ -12,6 +12,6 @@ type Entity interface {
 type BaseEntity struct {
 	CreatedAt time.Time `json:"created_at"` // 创建时间
 	UpdatedAt time.Time `json:"updated_at"` // 更新时间
-	CreatedBy string    `json:"created_by"` // 创建人
-	UpdatedBy string    `json:"updated_by"` // 更新人
+	CreatedBy uint64    `json:"created_by"` // 创建人
+	UpdatedBy uint64    `json:"updated_by"` // 更新人
 }

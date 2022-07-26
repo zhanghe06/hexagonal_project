@@ -41,7 +41,9 @@ go test -count=1 -cover ./...
 | uint32 | int(11) unsigned | 4 | 0-4294967295
 | uint64 | bigint(21) unsigned | 8 | 0-18446744073709551615
 
-说明：mysql类型int(M) M 表示最大显示宽度，与所占多少存储空间并无任何关系
+说明：
+1. mysql类型int(M) M 表示最大显示宽度，与所占多少存储空间并无任何关系
+2. int 在32位系统中，和uint32相同；在64位系统中，和uint64相同
 
 mysql 字符串类型
 
@@ -63,6 +65,14 @@ time | 3 | 时间
 datetime | 8 | 时间
 timestamp | 4 | 时间
 year | 1 | 年份
+
+## GORM with Context
+
+[GORM with Context](https://gorm.io/docs/context.html)
+
+## 软删
+
+[Without Hooks/Time Tracking](https://gorm.io/docs/update.html#Without-Hooks-x2F-Time-Tracking)
 
 ## 关于参数`model.Xxxx`和`entity.Xxxx`的使用场景
 
