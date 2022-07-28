@@ -76,6 +76,10 @@ year | 1 | year
 - DTO - controller request
 - VO - controller response
 
+## validator
+
+[go-playground validator](https://pkg.go.dev/github.com/go-playground/validator#hdr-Baked_In_Validators_and_Tags)
+
 ## TODO
 
 - [X] Dependency inversion principle，DIP

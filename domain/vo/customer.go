@@ -6,20 +6,18 @@ type UriCustomerIdReq struct {
 
 type UriCustomerAddressIdReq struct {
 	CustomerId uint64 `uri:"customer_id" binding:"required"`
-	AddressId uint64 `uri:"address_id" binding:"required"`
+	AddressId  uint64 `uri:"address_id" binding:"required"`
 }
 
 // CustomerCreateReq .
 type CustomerCreateReq struct {
-	//Name string `binding:"required,email" form:"name" json:"name"` // 名称
-	Name string `binding:"required" form:"name" json:"name"` // 名称
-	CustomerAddresses []CustomerAddressReq `binding:"omitempty" form:"addresses" json:"addresses"`
+	Name              string                     `binding:"required" form:"name" json:"name"` // 名称
+	CustomerAddresses []CustomerAddressCreateReq `binding:"omitempty,dive" form:"addresses" json:"addresses"`
 }
 
 // CustomerUpdateReq .
 type CustomerUpdateReq struct {
 	Name string `binding:"omitempty" json:"name,omitempty"` // 名称
-	//CustomerAddresses []CustomerAddressReq `binding:"omitempty" form:"addresses" json:"addresses"`
 }
 
 // CustomerGetListReq .
@@ -30,10 +28,10 @@ type CustomerGetListReq struct {
 	Sorter    string   `binding:"omitempty" form:"sorter,omitempty" json:"sorter,omitempty"`             // 排序字段
 }
 
-type CustomerAddressReq struct {
+type CustomerAddressCreateReq struct {
 	Address   string `binding:"required" form:"address" json:"address"`
 	Contact   string `binding:"required" form:"contact" json:"contact"`
 	Phone     string `binding:"required" form:"phone" json:"phone"`
-	Email     string `binding:"required" form:"email" json:"email"`
-	DefaultSt uint8  `binding:"required" form:"default_st" json:"default_st"`
+	Email     string `binding:"omitempty,email" form:"email" json:"email"`
+	DefaultSt *uint8 `binding:"required" form:"default_st" json:"default_st"`
 }

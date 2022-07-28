@@ -35,6 +35,7 @@ func NewCustomerAddressRepo() repository_port.CustomerAddressRepositoryPort {
 
 func (repo *customerAddressRepo) GetInfo(ctx context.Context, id uint64) (res *model.CustomerAddress, err error) {
 	tx := repo.db.WithContext(ctx)
+
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -45,6 +46,7 @@ func (repo *customerAddressRepo) GetInfo(ctx context.Context, id uint64) (res *m
 
 func (repo *customerAddressRepo) GetList(ctx context.Context, filter map[string]interface{}, args ...interface{}) (total int64, res []model.CustomerAddress, err error) {
 	tx := repo.db.WithContext(ctx)
+
 	// 排序条件
 	sorter := fmt.Sprintf("%s %s", "id", "DESC")
 	if v, ok := filter["sorter"]; ok {
@@ -125,6 +127,7 @@ func (repo *customerAddressRepo) Update(ctx context.Context, id uint64, data map
 
 func (repo *customerAddressRepo) Delete(ctx context.Context, id uint64) (err error) {
 	tx := repo.db.WithContext(ctx)
+
 	// 参数处理
 	userId := ctx.Value("userId")
 	if userId == nil {

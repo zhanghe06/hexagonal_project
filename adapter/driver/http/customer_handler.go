@@ -89,9 +89,6 @@ func (h *customerHttpHandler) createCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
 
-	// TODO 测试Context 后续放在认证中间件处理
-	c.Set("userId", 100)
-
 	// 请求处理
 	var customerCreateReq vo.CustomerCreateReq
 	if err := c.ShouldBindJSON(&customerCreateReq); err != nil {
@@ -103,7 +100,6 @@ func (h *customerHttpHandler) createCustomerHandler(c *gin.Context) {
 	var customerEntity entity.Customer
 	customerEntity.Name = customerCreateReq.Name
 
-
 	customerEntity.CustomerAddresses = make([]entity.CustomerAddress, 0)
 
 	for _, v := range customerCreateReq.CustomerAddresses {
@@ -112,7 +108,7 @@ func (h *customerHttpHandler) createCustomerHandler(c *gin.Context) {
 			Contact: v.Contact,
 			Phone: v.Phone,
 			Email: v.Email,
-			DefaultSt: v.DefaultSt,
+			DefaultSt: *v.DefaultSt,
 		}
 		customerEntity.CustomerAddresses = append(customerEntity.CustomerAddresses, customerAddress)
 	}
@@ -134,9 +130,6 @@ func (h *customerHttpHandler) createCustomerHandler(c *gin.Context) {
 func (h *customerHttpHandler) updateCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
-
-	// TODO 测试Context 后续放在认证中间件处理
-	c.Set("userId", 100)
 
 	// 请求处理
 	var uriIdReq vo.UriCustomerIdReq
@@ -229,9 +222,6 @@ func (h *customerHttpHandler) getCustomerListHandler(c *gin.Context) {
 func (h *customerHttpHandler) deleteCustomerHandler(c *gin.Context) {
 	// 异常捕获
 	defer response.ApiRecover(c)
-
-	// TODO 测试Context 后续放在认证中间件处理
-	c.Set("userId", 100)
 
 	// 请求处理
 	var uriIdReq vo.UriCustomerIdReq

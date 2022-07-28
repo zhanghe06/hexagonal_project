@@ -111,6 +111,12 @@ year | 1 | 年份
 
 https://github.com/go-gorm/gorm/blob/master/errors.go
 
+## validator
+
+[go-playground validator](https://pkg.go.dev/github.com/go-playground/validator#hdr-Baked_In_Validators_and_Tags)
+
+[]()
+
 ## TODO
 
 - [X] 依赖反转（Dependency inversion principle，DIP）

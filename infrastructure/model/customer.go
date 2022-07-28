@@ -19,11 +19,11 @@ func (m *Customer) BeforeCreate(tx *gorm.DB) (err error) {
 	ctx := tx.Statement.Context
 
 	// 参数处理
-	userId := ctx.Value("userId")
+	userId := ctx.Value("user_id")
 	if userId == nil {
 		userId = 0
 	}
-	operator := uint64(userId.(int))
+	operator := userId.(uint64)
 	m.CreatedBy = operator
 	m.UpdatedBy = operator
 
@@ -34,11 +34,11 @@ func (m *Customer) BeforeUpdate(tx *gorm.DB) (err error) {
 	ctx := tx.Statement.Context
 
 	// 参数处理
-	userId := ctx.Value("userId")
+	userId := ctx.Value("user_id")
 	if userId == nil {
 		userId = 0
 	}
-	operator := uint64(userId.(int))
+	operator := userId.(uint64)
 	//m.UpdatedBy = operator // not work
 	tx.Statement.SetColumn("updated_by", operator)
 

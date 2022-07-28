@@ -9,6 +9,8 @@ import (
 	"hexagonal_project/infrastructure/middleware"
 	"log"
 	"os"
+	"strings"
+	"time"
 )
 
 type server struct {
@@ -18,30 +20,48 @@ type server struct {
 	orderRestHandler    driver.HttpHandlerInterface
 }
 
+
 func (s *server) Start() {
 	conf := config.NewConfig()
 	go func() {
 		engine := gin.New()
 		//engine.Use(gin.Recovery())
 
-		//formatter := func(p gin.LogFormatterParams) string {
-		//	return fmt.Sprintf("[logger] %s %s %s %d %s\n",
-		//		p.TimeStamp.Format("2006-01-02_15:04:05"),
-		//		p.Path,
-		//		p.Method,
-		//		p.StatusCode,
-		//		p.ClientIP,
-		//	)
-		//}
+		formatter := func(p gin.LogFormatterParams) string {
+
+			errMsg := strings.TrimSpace(p.ErrorMessage)
+			logInfo := fmt.Sprintf("[logger] %s %s %s %s %s %s %d %s \"%s\" \"%s\"\n",
+				p.TimeStamp.Format(time.RFC3339),
+				p.Keys["request_id"],
+				p.ClientIP,
+				p.Method,
+				p.Path,
+				p.Request.Proto,
+				p.StatusCode,
+				p.Latency,
+				p.Request.UserAgent(),
+				errMsg,
+			)
+			if errMsg != "" {
+				logInfo += fmt.Sprintf("[req_header]\n%s\n", p.Keys["req_header"])
+				logInfo += fmt.Sprintf("[req_body]\n%s\n", p.Keys["req_body"])
+				logInfo += fmt.Sprintf("[res_header]\n%s\n", p.Keys["res_header"])
+				logInfo += fmt.Sprintf("[res_body]\n%s\n", p.Keys["res_body"])
+			}
+			return logInfo
+		}
 		logConf := gin.LoggerConfig{
 			SkipPaths: []string{"/health/ready", "/health/alive"},
 			Output:    os.Stderr,
-			//Formatter: formatter,
+			Formatter: formatter,
 		}
 		engine.Use(
 			//gin.Logger(),
 			gin.LoggerWithConfig(logConf),
+			middleware.RequestIdMiddleware(),
+			middleware.RequestContentMiddleware(),
 			middleware.RecoveryMiddleware(),
+			middleware.TokenAuthMiddleware(),
 		)
 		engine.UseRawPath = true
 
