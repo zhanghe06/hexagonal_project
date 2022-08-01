@@ -160,7 +160,20 @@ func (h *customerHttpHandler) updateCustomerHandler(c *gin.Context) {
 	// 逻辑处理
 	err = h.customerService.Update(c, uriIdReq.CustomerId, data)
 	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 原始错误
+			//_ = c.AbortWithError(http.StatusNotFound, err)
+
+			// 封装错误
+			apiErr := response.NewApiError(
+				err.Error(),
+				response.CustomerNotFound,
+			)
+			_ = c.AbortWithError(http.StatusNotFound, apiErr)
+			return
+		}
+		// 异常错误
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	c.Status(http.StatusOK)
@@ -232,9 +245,21 @@ func (h *customerHttpHandler) deleteCustomerHandler(c *gin.Context) {
 
 	// 逻辑处理
 	err := h.customerService.Delete(c, uriIdReq.CustomerId)
-	// TODO
 	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 原始错误
+			//_ = c.AbortWithError(http.StatusNotFound, err)
+
+			// 封装错误
+			apiErr := response.NewApiError(
+				err.Error(),
+				response.CustomerNotFound,
+			)
+			_ = c.AbortWithError(http.StatusNotFound, apiErr)
+			return
+		}
+		// 异常错误
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 

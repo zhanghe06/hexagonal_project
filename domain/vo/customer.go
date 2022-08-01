@@ -11,27 +11,29 @@ type UriCustomerAddressIdReq struct {
 
 // CustomerCreateReq .
 type CustomerCreateReq struct {
-	Name              string                     `binding:"required" form:"name" json:"name"` // 名称
-	CustomerAddresses []CustomerAddressCreateReq `binding:"omitempty,dive" form:"addresses" json:"addresses"`
+	Name              string                     `json:"name" binding:"required"` // 名称
+	CustomerAddresses []CustomerAddressCreateReq `json:"addresses" binding:"omitempty,unique=Contact,dive"`
 }
 
 // CustomerUpdateReq .
 type CustomerUpdateReq struct {
-	Name string `binding:"omitempty" json:"name,omitempty"` // 名称
+	Name string `json:"name,omitempty" binding:"omitempty"` // 名称
 }
 
 // CustomerGetListReq .
+// form tag: ShouldBindQuery for api request
+// json tag: json.Marshal/json.Unmarshal for map filter
 type CustomerGetListReq struct {
-	Limit     *int     `binding:"omitempty" form:"limit,omitempty" json:"limit,omitempty"`
-	Offset    *int     `binding:"omitempty" form:"offset,omitempty" json:"offset,omitempty"`
-	CreatedAt []string `binding:"omitempty" form:"created_at[],omitempty" json:"created_at[],omitempty"` // 创建时间
-	Sorter    string   `binding:"omitempty" form:"sorter,omitempty" json:"sorter,omitempty"`             // 排序字段
+	Limit     *int     `form:"limit,omitempty" json:"limit,omitempty" binding:"omitempty"`
+	Offset    *int     `form:"offset,omitempty" json:"offset,omitempty" binding:"omitempty"`
+	CreatedAt []string `form:"created_at[],omitempty" json:"created_at[],omitempty" binding:"omitempty"` // 创建时间
+	Sorter    string   `form:"sorter,omitempty" json:"sorter,omitempty" binding:"omitempty"`             // 排序字段
 }
 
 type CustomerAddressCreateReq struct {
-	Address   string `binding:"required" form:"address" json:"address"`
-	Contact   string `binding:"required" form:"contact" json:"contact"`
-	Phone     string `binding:"required" form:"phone" json:"phone"`
-	Email     string `binding:"omitempty,email" form:"email" json:"email"`
-	DefaultSt *uint8 `binding:"required" form:"default_st" json:"default_st"`
+	Address   string `json:"address" binding:"required"`
+	Contact   string `json:"contact" binding:"required"`
+	Phone     string `json:"phone" binding:"required"`
+	Email     string `json:"email" binding:"omitempty,email"`
+	DefaultSt *uint8 `json:"default_st" binding:"required,eq=0|eq=1"`
 }

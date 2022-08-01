@@ -35,7 +35,7 @@ func formatHeader(header netHttp.Header) string {
 	}
 	var headerList []string
 	for name, headers := range header {
-		name = strings.ToLower(name)
+		// name = strings.ToLower(name)
 		for _, h := range headers {
 			format := fmt.Sprintf("%%%ds: %%s", keyMaxLong)
 			headerList = append(headerList, fmt.Sprintf(format, name, h))
